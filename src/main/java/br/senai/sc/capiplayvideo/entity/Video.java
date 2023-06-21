@@ -21,9 +21,9 @@ public class Video {
     private Integer visualizacoes;
     private URL video;
     private URL thumbnail;
-    @OneToMany
+    @OneToMany // ver a lógica da lista de tags
     private List<Tag> listaTags;
-
+    private List<Categoria> listaCategorias;
 
     public Video() {
         this.uuid = UUID.randomUUID();
