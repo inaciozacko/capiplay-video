@@ -1,12 +1,12 @@
 <h1>Entidade Video</h1>
 <h2>Atributos</h2>
 <table>
-  <ul>ID do video</ul>
-  <ul>Titulo</ul>
-  <ul>Descrição</ul>
-  <ul>Contagem de visualização</ul>
-  <ul>Caminho do video</ul>
-  <ul>Caminho da miniatura</ul>
-  <ul>Lista de Tags</ul>
-  <ul>Lista de categorias</ul>
+  <ol>ID do video</ol>
+  <ol>Titulo</ol>
+  <ol>Descrição</ol>
+  <ol>Contagem de visualização</ol>
+  <ol>Caminho do video</ol>
+  <ol>Caminho da miniatura</ol>
+  <ol>Lista de Tags</ol>
+  <ol>Lista de categorias</ol>
 </table>
