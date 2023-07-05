@@ -1,4 +1,4 @@
-package br.senai.sc.capiplayvideo.model.enums;
+package br.senai.sc.capiplayvideo.video.model.enums;
 
 public enum CategoriasEnum {
 

@@ -1,4 +1,4 @@
-package br.senai.sc.capiplayvideo.model.entity;
+package br.senai.sc.capiplayvideo.video.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

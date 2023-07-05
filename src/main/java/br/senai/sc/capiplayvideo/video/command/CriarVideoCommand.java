@@ -1,16 +1,17 @@
-package br.senai.sc.capiplayvideo.model.dto;
+package br.senai.sc.capiplayvideo.video.command;
 
-import br.senai.sc.capiplayvideo.model.entity.Categoria;
-import br.senai.sc.capiplayvideo.model.entity.Tag;
+import br.senai.sc.capiplayvideo.video.model.entity.Categoria;
+import br.senai.sc.capiplayvideo.video.model.entity.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
-public class VideoDTO {
+public class CriarVideoCommand {
 
     @NotNull
     private String titulo;

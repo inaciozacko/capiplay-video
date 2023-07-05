@@ -1,6 +1,6 @@
-package br.senai.sc.capiplayvideo.model.entity;
+package br.senai.sc.capiplayvideo.video.model.entity;
 
-import br.senai.sc.capiplayvideo.utils.GeradorUuidUtils;
+import br.senai.sc.capiplayvideo.video.utils.GeradorUuidUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,4 +32,5 @@ public class Video {
     public Video() {
         this.uuid = GeradorUuidUtils.gerarUuid();
     }
+
 }

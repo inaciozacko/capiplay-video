@@ -1,4 +1,4 @@
-package br.senai.sc.capiplayvideo.projection;
+package br.senai.sc.capiplayvideo.video.projection;
 
 public interface VideoMiniaturaProjection {
 

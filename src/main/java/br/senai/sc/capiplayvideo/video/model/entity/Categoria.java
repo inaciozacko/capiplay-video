@@ -1,6 +1,6 @@
-package br.senai.sc.capiplayvideo.model.entity;
+package br.senai.sc.capiplayvideo.video.model.entity;
 
-import br.senai.sc.capiplayvideo.model.enums.CategoriasEnum;
+import br.senai.sc.capiplayvideo.video.model.enums.CategoriasEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
