@@ -14,16 +14,16 @@ public class VideoDTO {
 
     private final String descricao;
 
-    private final List<Tag> tags;
+    private final List<String> tags;
 
-    private final Categoria categoria;
+    private final String categoria;
 
     private final MultipartFile video;
 
     private final MultipartFile miniatura;
 
-    public VideoDTO(String titulo, String descricao, List<Tag> tags,
-                    Categoria categoria, MultipartFile video, MultipartFile miniatura) {
+    public VideoDTO(String titulo, String descricao, List<String> tags,
+                    String categoria, MultipartFile video, MultipartFile miniatura) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.tags = tags;
