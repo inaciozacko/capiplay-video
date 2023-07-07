@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @Entity
 @AllArgsConstructor
+@Table
 public class Video {
 
     @Id
