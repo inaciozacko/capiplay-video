@@ -1,0 +1,1 @@
+ALTER TABLE video ADD FULLTEXT INDEX video_search (titulo, tags);

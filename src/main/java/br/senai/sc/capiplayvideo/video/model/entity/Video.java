@@ -24,7 +24,7 @@ public class Video {
 
     private String miniatura;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Tag> tags;
 
     @ManyToOne(cascade = CascadeType.ALL)
