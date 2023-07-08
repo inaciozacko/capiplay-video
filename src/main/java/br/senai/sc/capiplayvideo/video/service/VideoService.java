@@ -4,10 +4,11 @@ import br.senai.sc.capiplayvideo.video.exceptions.ObjetoInexistenteException;
 import br.senai.sc.capiplayvideo.video.model.dto.VideoDTO;
 import br.senai.sc.capiplayvideo.video.model.entity.Categoria;
 import br.senai.sc.capiplayvideo.video.model.entity.Video;
+import br.senai.sc.capiplayvideo.video.model.enums.ResolucaoEnum;
 import br.senai.sc.capiplayvideo.video.projection.VideoMiniaturaProjection;
 import br.senai.sc.capiplayvideo.video.projection.VideoProjection;
 import br.senai.sc.capiplayvideo.video.repository.VideoRepository;
-import lombok.AllArgsConstructor;
+import br.senai.sc.capiplayvideo.video.utils.GeradorUuidUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -34,42 +35,32 @@ public class VideoService {
     private String diretorio;
 
     public void salvar(VideoDTO videoDTO) {
-
-        Video video = new Video();
-        String diretorioEsse = diretorio + video.getUuid() + "\\";
-
+        String uuid = GeradorUuidUtils.gerarUuid();
+        String diretorioEsse = diretorio + uuid + "\\";
         try {
-            Path of = Path.of(diretorioEsse);
-            Files.createDirectories(of);
-            Path arquivoTemporario = Files.createTempFile(of, "video_", ".mp4");
-            videoDTO.getVideo().transferTo(arquivoTemporario.toFile());
-            String caminhoVideo = diretorioEsse + arquivoTemporario.getFileName();
-
-            BufferedImage ImagemRedimencionada = redimencionarImagem(videoDTO.getMiniatura().getInputStream(),
-                    1280, 800);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(ImagemRedimencionada, "JPEG", baos);
-            byte[] resizedBytes = baos.toByteArray();
-            arquivoTemporario = Files.createTempFile(of, "miniatura_", ".jpg");
-            Files.write(arquivoTemporario, resizedBytes, StandardOpenOption.CREATE);
-            String caminhoMiniatura = diretorioEsse + arquivoTemporario.getFileName();
-
-            System.out.println(caminhoVideo);
-            System.out.println(caminhoMiniatura);
-
+            Path caminho = Path.of(diretorioEsse);
+            Files.createDirectories(caminho);
+            Path arquivoTemporario = Files.createTempFile(caminho, "video_", ".mp4");
+            videoDTO.video().transferTo(arquivoTemporario.toFile());
+            for (ResolucaoEnum resolucaoEnum : ResolucaoEnum.values()) {
+                BufferedImage imagemRedimensionada = redimensionarImagem(
+                        videoDTO.miniatura().getInputStream(),
+                        resolucaoEnum.getLargura(), resolucaoEnum.getAltura());
+                arquivoTemporario = Files.createTempFile(caminho, "miniatura_" + resolucaoEnum, ".jpeg");
+                ImageIO.write(imagemRedimensionada, "JPEG", arquivoTemporario.toFile());
+            }
+            repository.save(new Video(uuid, videoDTO, diretorioEsse));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private BufferedImage redimencionarImagem(InputStream inputStream, int largura, int altura) throws IOException {
+    private BufferedImage redimensionarImagem(InputStream inputStream, int largura, int altura) throws IOException {
         BufferedImage sourceImage = ImageIO.read(inputStream);
         Image resizedImage = sourceImage.getScaledInstance(largura, altura, Image.SCALE_DEFAULT);
-
         BufferedImage bufferedResizedImage = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_RGB);
         bufferedResizedImage.getGraphics().drawImage(resizedImage, 0, 0, null);
-
         return bufferedResizedImage;
     }
 
