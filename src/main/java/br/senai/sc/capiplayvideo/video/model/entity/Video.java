@@ -1,5 +1,6 @@
 package br.senai.sc.capiplayvideo.video.model.entity;
 
+import br.senai.sc.capiplayvideo.video.model.dto.VideoDTO;
 import br.senai.sc.capiplayvideo.video.utils.GeradorUuidUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,6 @@ import java.util.List;
 @Data
 @Entity
 @AllArgsConstructor
-@Table
 public class Video {
 
     @Id
@@ -22,16 +22,23 @@ public class Video {
 
     private String caminho;
 
-    private String miniatura;
-
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     private List<Tag> tags;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Categoria categoria;
 
     public Video() {
         this.uuid = GeradorUuidUtils.gerarUuid();
+    }
+
+    public Video(String uuid, VideoDTO videoDTO, String caminho) {
+        this.uuid = uuid;
+        this.titulo = videoDTO.titulo();
+        this.descricao = videoDTO.descricao();
+        this.caminho = caminho;
+        this.tags = Tag.converterLista(videoDTO.tags());
+        this.categoria = new Categoria(videoDTO.categoria());
     }
 
 }
