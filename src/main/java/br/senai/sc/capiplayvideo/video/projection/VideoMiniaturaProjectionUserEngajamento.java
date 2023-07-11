@@ -8,12 +8,12 @@ public interface VideoMiniaturaProjectionUserEngajamento {
     String getMiniatura();
 
     //User
-    String getuuid();
+    String getUuidUsuario();
     String getNome();
     String getFoto();
 
     //Engajamento
-    Integer getDislikes();
-    Integer getLikes();
+    String getUuidEngajamento();
+    Integer getCurtidas();
     Integer getViews();
 }

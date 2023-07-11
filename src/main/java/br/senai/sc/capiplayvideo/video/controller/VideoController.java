@@ -28,8 +28,8 @@ public class VideoController {
     public void criar(
             @RequestParam("titulo") String titulo,
             @RequestParam("descricao") String descricao,
-            @RequestParam("tags") List<String> tags,
-            @RequestParam("categoria") String categoria,
+            @RequestParam("tags") List<Tag> tags,
+            @RequestParam("categoria") Categoria categoria,
             @RequestParam("video") MultipartFile video,
             @RequestParam("miniatura") MultipartFile miniatura
     ) {

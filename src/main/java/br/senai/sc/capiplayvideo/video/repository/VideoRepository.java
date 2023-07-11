@@ -7,10 +7,9 @@ import br.senai.sc.capiplayvideo.video.projection.VideoProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +22,8 @@ public interface VideoRepository extends JpaRepository<Video, String> {
 
     Optional<VideoProjection> findByUuid(String uuid);
 
-    @Query(value = "SELECT * FROM video, tag WHERE MATCH(video.titulo,tag.tags) AGAINST('teste')", nativeQuery = true)
-    List<Video> searchByTitulo(@Param("searchTerm") String searchTerm);
+    List<Video> findByDataPublicacaoAfter(LocalDate data);
+    List<Video> findByDuracaoLessThanEqual(int duracao);
+    List<Video> findByTipo(String tipo);
 
 }

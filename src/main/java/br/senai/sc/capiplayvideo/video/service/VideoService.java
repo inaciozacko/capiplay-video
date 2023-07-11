@@ -1,67 +1,38 @@
 package br.senai.sc.capiplayvideo.video.service;
 
+import br.senai.sc.capiplayvideo.filtro.modal.entity.Filtro;
 import br.senai.sc.capiplayvideo.video.exceptions.ObjetoInexistenteException;
 import br.senai.sc.capiplayvideo.video.model.dto.VideoDTO;
 import br.senai.sc.capiplayvideo.video.model.entity.Categoria;
 import br.senai.sc.capiplayvideo.video.model.entity.Video;
-import br.senai.sc.capiplayvideo.video.model.enums.ResolucaoEnum;
 import br.senai.sc.capiplayvideo.video.projection.VideoMiniaturaProjection;
 import br.senai.sc.capiplayvideo.video.projection.VideoProjection;
 import br.senai.sc.capiplayvideo.video.repository.VideoRepository;
-import br.senai.sc.capiplayvideo.video.utils.GeradorUuidUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class VideoService {
 
-    @Autowired
-    private VideoRepository repository;
-
-    @Value("${diretorioVideos}")
-    private String diretorio;
+    private final VideoRepository repository;
 
     public void salvar(VideoDTO videoDTO) {
-        String uuid = GeradorUuidUtils.gerarUuid();
-        String diretorioEsse = diretorio + uuid + "\\";
+        String pasta = "D:\\capiplay-video";
         try {
-            Path caminho = Path.of(diretorioEsse);
-            Files.createDirectories(caminho);
-            Path arquivoTemporario = Files.createTempFile(caminho, "video_", ".mp4");
-            videoDTO.video().transferTo(arquivoTemporario.toFile());
-            for (ResolucaoEnum resolucaoEnum : ResolucaoEnum.values()) {
-                BufferedImage imagemRedimensionada = redimensionarImagem(
-                        videoDTO.miniatura().getInputStream(),
-                        resolucaoEnum.getLargura(), resolucaoEnum.getAltura());
-                arquivoTemporario = Files.createTempFile(caminho, "miniatura_" + resolucaoEnum, ".jpeg");
-                ImageIO.write(imagemRedimensionada, "JPEG", arquivoTemporario.toFile());
-            }
-            repository.save(new Video(uuid, videoDTO, diretorioEsse));
+            Path arquivoTemporario = Files.createTempFile(Path.of(pasta), "video_", "_temp");
+            videoDTO.getVideo().transferTo(arquivoTemporario.toFile());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-    }
-
-    private BufferedImage redimensionarImagem(InputStream inputStream, int largura, int altura) throws IOException {
-        BufferedImage sourceImage = ImageIO.read(inputStream);
-        Image resizedImage = sourceImage.getScaledInstance(largura, altura, Image.SCALE_DEFAULT);
-        BufferedImage bufferedResizedImage = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_RGB);
-        bufferedResizedImage.getGraphics().drawImage(resizedImage, 0, 0, null);
-        return bufferedResizedImage;
     }
 
     public Page<VideoMiniaturaProjection> buscarTodos(Pageable pageable) {
@@ -78,5 +49,82 @@ public class VideoService {
 
     public void deletar(String uuid) {
         repository.deleteById(uuid);
+    }
+
+
+    public List<Video> filtrarVideos(Filtro filtro) {
+        List<Video> videosFiltrados = new ArrayList<>();
+
+        // Verificar o filtro de data de publicação
+        if (filtro.isFiltroDia()) {
+            LocalDate dataPublicacao = LocalDate.now();
+            List<Video> videosDoDia = repository.findByDataPublicacaoAfter(dataPublicacao);
+            videosFiltrados.addAll(videosDoDia);
+        } else if (filtro.isFiltroSemana()) {
+            LocalDate dataPublicacao = LocalDate.now().minusWeeks(1);
+            List<Video> videosDaSemana = repository.findByDataPublicacaoAfter(dataPublicacao);
+            videosFiltrados.addAll(videosDaSemana);
+        } else if (filtro.isFiltroMes()) {
+            LocalDate dataPublicacao = LocalDate.now().minusMonths(1);
+            List<Video> videosDoMes = repository.findByDataPublicacaoAfter(dataPublicacao);
+            videosFiltrados.addAll(videosDoMes);
+        }else if (filtro.isFiltroAno()) {
+            LocalDate dataPublicacao = LocalDate.now().minusYears(1);
+            List<Video> videosDoAno = repository.findByDataPublicacaoAfter(dataPublicacao);
+            videosFiltrados.addAll(videosDoAno);
+        } else {
+            videosFiltrados.addAll(repository.findAll());
+        }
+
+        // Verificar o filtro de duração
+        List<Video> videosComDuracaoFiltrada = new ArrayList<>();
+        if (filtro.isFiltroMenosDe5Min()) {
+            videosComDuracaoFiltrada.addAll(filtrarPorDuracao(videosFiltrados, 0, 5));
+        }
+        if (filtro.isFiltroEntre5E20Min()) {
+            videosComDuracaoFiltrada.addAll(filtrarPorDuracao(videosFiltrados, 5, 20));
+        }
+        if (filtro.isFiltroMaisDe20Min()) {
+            videosComDuracaoFiltrada.addAll(filtrarPorDuracao(videosFiltrados, 20, Integer.MAX_VALUE));
+        }
+        if (videosComDuracaoFiltrada.isEmpty()) {
+            videosComDuracaoFiltrada.addAll(videosFiltrados); // Nenhum filtro de duração selecionado, manter vídeos filtrados até o momento
+        }
+
+        // Verificar o filtro de tipo
+        List<Video> videosFiltradosPorTipo = new ArrayList<>();
+        if (filtro.isFiltroVideo()) {
+            videosFiltradosPorTipo.addAll(filtrarPorTipo(videosComDuracaoFiltrada, "video"));
+        }
+        if (filtro.isFiltroShorts()) {
+            videosFiltradosPorTipo.addAll(filtrarPorTipo(videosComDuracaoFiltrada, "shorts"));
+        }
+        if (videosFiltradosPorTipo.isEmpty()) {
+            videosFiltradosPorTipo.addAll(videosComDuracaoFiltrada); // Nenhum filtro de tipo selecionado, manter vídeos filtrados até o momento
+        }
+
+        return videosFiltradosPorTipo;
+    }
+
+    private List<Video> filtrarPorDuracao(List<Video> videos, int duracaoMinima, int duracaoMaxima) {
+        List<Video> videosFiltrados = new ArrayList<>();
+        for (Video video : videos) {
+            float duracao = video.getTempoDuracao();
+            if (duracao >= duracaoMinima && duracao <= duracaoMaxima) {
+                videosFiltrados.add(video);
+            }
+        }
+        return videosFiltrados;
+    }
+
+    private List<Video> filtrarPorTipo(List<Video> videos, String tipo) {
+        List<Video> videosFiltrados = new ArrayList<>();
+        for (Video video : videos) {
+            String tipoVideo = video.getTipo();
+            if (tipoVideo.equals(tipo)) {
+                videosFiltrados.add(video);
+            }
+        }
+        return videosFiltrados;
     }
 }

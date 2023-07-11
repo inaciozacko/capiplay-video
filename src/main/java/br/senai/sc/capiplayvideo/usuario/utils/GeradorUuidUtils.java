@@ -1,4 +1,4 @@
-package br.senai.sc.capiplayvideo.video.utils;
+package br.senai.sc.capiplayvideo.usuario.utils;
 
 import java.util.UUID;
 

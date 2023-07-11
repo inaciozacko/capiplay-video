@@ -15,8 +15,4 @@ public class Categoria {
     @Enumerated(EnumType.STRING)
     private CategoriasEnum categoria;
 
-    public Categoria(String categoria) {
-        this.categoria = CategoriasEnum.valueOf(categoria);
-    }
-
 }

@@ -25,6 +25,12 @@ public class CriarVideoCommand {
     private String miniatura;
 
     @NotNull
+    private Integer visualizacoes;
+
+    @NotNull
+    private Integer curtidas;
+
+    @NotNull
     private List<Tag> tags;
 
     @NotNull

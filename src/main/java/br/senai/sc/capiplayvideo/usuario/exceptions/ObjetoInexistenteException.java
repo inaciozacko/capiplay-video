@@ -1,4 +1,4 @@
-package br.senai.sc.capiplayvideo.video.exceptions;
+package br.senai.sc.capiplayvideo.usuario.exceptions;
 
 public class ObjetoInexistenteException extends RuntimeException{
     public ObjetoInexistenteException() {
