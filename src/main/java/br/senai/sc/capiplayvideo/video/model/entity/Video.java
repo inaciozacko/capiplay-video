@@ -22,7 +22,7 @@ public class Video {
 
     private String caminho;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
     private List<Tag> tags;
 
     @ManyToOne(cascade = CascadeType.PERSIST)

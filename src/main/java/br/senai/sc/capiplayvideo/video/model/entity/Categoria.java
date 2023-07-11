@@ -2,10 +2,13 @@ package br.senai.sc.capiplayvideo.video.model.entity;
 
 import br.senai.sc.capiplayvideo.video.model.enums.CategoriasEnum;
 import jakarta.persistence.*;
+import jdk.swing.interop.SwingInterOpUtils;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Categoria {
 
     @Id

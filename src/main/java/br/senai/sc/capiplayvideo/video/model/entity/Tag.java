@@ -1,5 +1,6 @@
 package br.senai.sc.capiplayvideo.video.model.entity;
 
+import br.senai.sc.capiplayvideo.video.service.TagService;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.SecondaryTable;
