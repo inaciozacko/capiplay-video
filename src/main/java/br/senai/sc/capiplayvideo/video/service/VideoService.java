@@ -31,6 +31,12 @@ public class VideoService {
     @Autowired
     private VideoRepository repository;
 
+    @Autowired
+    private TagService tagService;
+
+    @Autowired
+    private CategoriaService categoriaService;
+
     @Value("${diretorioVideos}")
     private String diretorio;
 
@@ -46,10 +52,13 @@ public class VideoService {
                 BufferedImage imagemRedimensionada = redimensionarImagem(
                         videoDTO.miniatura().getInputStream(),
                         resolucaoEnum.getLargura(), resolucaoEnum.getAltura());
-                arquivoTemporario = Files.createTempFile(caminho, "miniatura_" + resolucaoEnum, ".jpeg");
+                arquivoTemporario = Files.createTempFile(caminho, "miniatura_" + resolucaoEnum + "_", ".jpeg");
                 ImageIO.write(imagemRedimensionada, "JPEG", arquivoTemporario.toFile());
             }
-            repository.save(new Video(uuid, videoDTO, diretorioEsse));
+            Video video = new Video(uuid, videoDTO, diretorioEsse);
+            video.getTags().forEach(tagService::salvar);
+            categoriaService.salvar(video.getCategoria());
+            repository.save(video);
         } catch (Exception e) {
             e.printStackTrace();
         }
