@@ -19,6 +19,6 @@ public class PesquisaController {
 
     @PostMapping("/{pesquisa}")
     public List<Video> buscarVideos(@PathVariable String pesquisa) {
-        return videoRepository.searchByTitulo(pesquisa);
+        return videoRepository.searchByTituloOrTagsOrCategoria(pesquisa);
     }
 }
