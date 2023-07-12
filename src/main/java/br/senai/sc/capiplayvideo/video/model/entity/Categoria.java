@@ -18,8 +18,11 @@ public class Categoria {
     @Enumerated(EnumType.STRING)
     private CategoriasEnum categoria;
 
+    private String categoriaString;
+
     public Categoria(String categoria) {
         this.categoria = CategoriasEnum.valueOf(categoria);
+        this.categoriaString = categoria;  // FAZER A LÓGICA
     }
 
 }

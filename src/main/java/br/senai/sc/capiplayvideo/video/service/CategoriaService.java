@@ -12,7 +12,9 @@ public class CategoriaService {
     private CategoriaRepository repository;
 
     public void salvar(Categoria categoria) {
-        repository.save(categoria);
+        repository.findByCategoria(categoria.getCategoria())
+                .ifPresentOrElse(categoriaExistente -> categoria.setId(categoriaExistente.getId()),
+                        () -> repository.save(categoria));
     }
 
 }
