@@ -1,12 +1,10 @@
 package br.senai.sc.capiplayvideo.pesquisa.controller;
 
+import br.senai.sc.capiplayvideo.pesquisa.service.PesquisaService;
 import br.senai.sc.capiplayvideo.video.model.entity.Video;
 import br.senai.sc.capiplayvideo.video.repository.VideoRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,10 +13,10 @@ import java.util.List;
 @RequestMapping("/api/pesquisa")
 public class PesquisaController {
 
-    private VideoRepository videoRepository;
+    private PesquisaService pesquisaService;
 
-    @PostMapping("/{pesquisa}")
+    @GetMapping("/{pesquisa}")
     public List<Video> buscarVideos(@PathVariable String pesquisa) {
-        return videoRepository.searchByTituloOrTagsOrCategoria(pesquisa);
+        return pesquisaService.buscarVideos(pesquisa);
     }
 }
