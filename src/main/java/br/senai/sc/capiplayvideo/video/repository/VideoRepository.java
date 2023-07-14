@@ -22,8 +22,4 @@ public interface VideoRepository extends JpaRepository<Video, String> {
     Page<VideoMiniaturaProjection> findAllByCategoria(Categoria categoria, Pageable pageable);
 
     Optional<VideoProjection> findByUuid(String uuid);
-
-    @Query(value = "SELECT video.uuid FROM video, tag, categoria WHERE MATCH(titulo) AGAINST(CONCAT('%', :searchTerm, '%')) OR MATCH(categoria) AGAINST('%', :searchTerm, '%') OR MATCH(tag) AGAINST('%', :searchTerm, '%')", nativeQuery = true)
-    List<Video> searchByTituloOrTagsOrCategoria(@Param("searchTerm") String searchTerm);
-
 }
