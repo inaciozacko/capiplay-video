@@ -6,7 +6,7 @@ public enum CategoriasEnum {
     CIENCIAETECNOLOGIA("Ciência e Tecnologia"),
     CULINARIA("Culinária"),
     EDUCACAO("Educação"),
-    ENTRETERIMENTO("Entreterimento"),
+    ENTRETENIMENTO("Entretenimento"),
     ESPORTES("Esportes"),
     DOCUMENTARIO("Documentário"),
     JOGOS("Jogos"),
