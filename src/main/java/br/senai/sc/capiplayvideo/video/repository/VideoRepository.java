@@ -2,8 +2,8 @@ package br.senai.sc.capiplayvideo.video.repository;
 
 import br.senai.sc.capiplayvideo.video.model.entity.Categoria;
 import br.senai.sc.capiplayvideo.video.model.entity.Video;
-import br.senai.sc.capiplayvideo.video.projection.VideoMiniaturaProjection;
-import br.senai.sc.capiplayvideo.video.projection.VideoProjection;
+import br.senai.sc.capiplayvideo.video.model.projection.VideoMiniaturaProjection;
+import br.senai.sc.capiplayvideo.video.model.projection.VideoProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,5 +22,8 @@ public interface VideoRepository extends JpaRepository<Video, String> {
     Page<VideoMiniaturaProjection> findAllByCategoria(Categoria categoria, Pageable pageable);
 
     Optional<VideoProjection> findByUuid(String uuid);
+
+    @Query(value = "SELECT video.uuid FROM video, tag, categoria WHERE MATCH(titulo) AGAINST(CONCAT('%', :searchTerm, '%')) OR MATCH(categoria) AGAINST('%', :searchTerm, '%') OR MATCH(tag) AGAINST('%', :searchTerm, '%')", nativeQuery = true)
+    List<Video> searchByTituloOrTagsOrCategoria(@Param("searchTerm") String searchTerm);
 
 }
