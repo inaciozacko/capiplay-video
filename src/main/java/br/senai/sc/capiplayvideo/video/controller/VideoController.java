@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,7 @@ public class VideoController {
             @RequestParam("ehReels") Boolean ehReels,
             @RequestParam("video") MultipartFile video,
             @RequestParam("miniatura") MultipartFile miniatura
-    ) {
+    ) throws IOException {
         service.salvar(new VideoDTO(titulo, descricao, tags, categoria, ehReels, video, miniatura));
         return ResponseEntity.ok().build();
     }

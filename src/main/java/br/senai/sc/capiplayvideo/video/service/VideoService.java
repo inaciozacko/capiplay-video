@@ -11,6 +11,7 @@ import br.senai.sc.capiplayvideo.video.repository.VideoRepository;
 import br.senai.sc.capiplayvideo.video.utils.GeradorUuidUtils;
 import jakarta.validation.Valid;
 import jdk.swing.interop.SwingInterOpUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -40,7 +42,7 @@ public class VideoService {
     @Value("${diretorioVideos}")
     private String diretorio;
 
-    public void salvar(@Valid VideoDTO videoDTO) {
+    public void salvar(@Valid VideoDTO videoDTO) throws IOException {
         String uuid = GeradorUuidUtils.gerarUuid();
         String diretorioEsse = diretorio + uuid + "\\";
         try {
@@ -51,7 +53,8 @@ public class VideoService {
             for (ResolucaoEnum resolucaoEnum : ResolucaoEnum.values()) {
                 BufferedImage imagemRedimensionada = redimensionarImagem(
                         videoDTO.miniatura().getInputStream(),
-                        resolucaoEnum.getLargura(), resolucaoEnum.getAltura());
+                        resolucaoEnum.getLargura(),
+                        resolucaoEnum.getAltura());
                 arquivoTemporario = Files.createTempFile(caminho, "miniatura_" + resolucaoEnum + "_", ".jpeg");
                 ImageIO.write(imagemRedimensionada, "JPEG", arquivoTemporario.toFile());
             }
@@ -60,15 +63,14 @@ public class VideoService {
             categoriaService.salvar(video.getCategoria());
             repository.save(video);
         } catch (Exception e) {
-            e.printStackTrace();
+            FileUtils.deleteDirectory(new File(diretorioEsse));
+            throw e;
         }
 
     }
 
     private BufferedImage redimensionarImagem(InputStream inputStream, int largura, int altura) throws IOException {
-        System.out.println(inputStream);
         BufferedImage sourceImage = ImageIO.read(inputStream);
-        System.out.println(sourceImage);
         Image resizedImage = sourceImage.getScaledInstance(largura, altura, Image.SCALE_SMOOTH);
         BufferedImage bufferedResizedImage = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_RGB);
         bufferedResizedImage.getGraphics().drawImage(resizedImage, 0, 0, null);
