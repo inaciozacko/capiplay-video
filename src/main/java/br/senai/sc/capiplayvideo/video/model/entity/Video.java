@@ -3,7 +3,6 @@ package br.senai.sc.capiplayvideo.video.model.entity;
 import br.senai.sc.capiplayvideo.video.model.dto.VideoDTO;
 import br.senai.sc.capiplayvideo.video.utils.GeradorUuidUtils;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +17,7 @@ public class Video {
     @Id
     private String uuid;
 
-    @Size(min = 3)
+    @Size(min = 3, max = 100)
     private String titulo;
 
     private String descricao;

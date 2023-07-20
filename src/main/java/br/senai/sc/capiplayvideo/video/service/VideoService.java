@@ -66,7 +66,6 @@ public class VideoService {
             FileUtils.deleteDirectory(new File(diretorioEsse));
             throw e;
         }
-
     }
 
     private BufferedImage redimensionarImagem(InputStream inputStream, int largura, int altura) throws IOException {
