@@ -41,4 +41,7 @@ public class Filtro {
 
     @Column(nullable = false)
     private boolean filtroShorts;
+
+    public Filtro(boolean filtroDia, boolean filtroSemana, boolean filtroMes, boolean filtroAno, boolean filtroMenosDe5Min, boolean filtroEntre5E20Min, boolean filtroMaisDe20Min, boolean filtroVideo, boolean filtroShorts) {
+    }
 }

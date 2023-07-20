@@ -10,6 +10,8 @@ import br.senai.sc.capiplayvideo.video.projection.VideoProjection;
 import br.senai.sc.capiplayvideo.video.repository.VideoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -51,59 +53,57 @@ public class VideoService {
         repository.deleteById(uuid);
     }
 
-
-    public List<Video> filtrarVideos(Filtro filtro) {
+    public Page<Video> filtrarVideos(String pesquisa, Filtro filtro, Pageable pageable) {
         List<Video> videosFiltrados = new ArrayList<>();
 
-        // Verificar o filtro de data de publicação
+        //Passar a lógica de filtragem pela String de pesquisa (Pedro)
+
+        // E Com o resultado da pesquisa armazenar no videosFiltrados
+
+        //Por fim filtrar por data e duração (Os filtros logo abaixo)
+
+        // Verificar os filtros de data de publicação
         if (filtro.isFiltroDia()) {
             LocalDate dataPublicacao = LocalDate.now();
             List<Video> videosDoDia = repository.findByDataPublicacaoAfter(dataPublicacao);
-            videosFiltrados.addAll(videosDoDia);
+            videosFiltrados.retainAll(videosDoDia);
         } else if (filtro.isFiltroSemana()) {
             LocalDate dataPublicacao = LocalDate.now().minusWeeks(1);
             List<Video> videosDaSemana = repository.findByDataPublicacaoAfter(dataPublicacao);
-            videosFiltrados.addAll(videosDaSemana);
+            videosFiltrados.retainAll(videosDaSemana);
         } else if (filtro.isFiltroMes()) {
             LocalDate dataPublicacao = LocalDate.now().minusMonths(1);
             List<Video> videosDoMes = repository.findByDataPublicacaoAfter(dataPublicacao);
-            videosFiltrados.addAll(videosDoMes);
-        }else if (filtro.isFiltroAno()) {
+            videosFiltrados.retainAll(videosDoMes);
+        } else if (filtro.isFiltroAno()) {
             LocalDate dataPublicacao = LocalDate.now().minusYears(1);
             List<Video> videosDoAno = repository.findByDataPublicacaoAfter(dataPublicacao);
-            videosFiltrados.addAll(videosDoAno);
-        } else {
-            videosFiltrados.addAll(repository.findAll());
+            videosFiltrados.retainAll(videosDoAno);
         }
 
         // Verificar o filtro de duração
-        List<Video> videosComDuracaoFiltrada = new ArrayList<>();
         if (filtro.isFiltroMenosDe5Min()) {
-            videosComDuracaoFiltrada.addAll(filtrarPorDuracao(videosFiltrados, 0, 5));
+            videosFiltrados.retainAll(filtrarPorDuracao(videosFiltrados, 0, 5));
         }
         if (filtro.isFiltroEntre5E20Min()) {
-            videosComDuracaoFiltrada.addAll(filtrarPorDuracao(videosFiltrados, 5, 20));
+            videosFiltrados.retainAll(filtrarPorDuracao(videosFiltrados, 5, 20));
         }
         if (filtro.isFiltroMaisDe20Min()) {
-            videosComDuracaoFiltrada.addAll(filtrarPorDuracao(videosFiltrados, 20, Integer.MAX_VALUE));
-        }
-        if (videosComDuracaoFiltrada.isEmpty()) {
-            videosComDuracaoFiltrada.addAll(videosFiltrados); // Nenhum filtro de duração selecionado, manter vídeos filtrados até o momento
+            videosFiltrados.retainAll(filtrarPorDuracao(videosFiltrados, 20, Integer.MAX_VALUE));
         }
 
         // Verificar o filtro de tipo
-        List<Video> videosFiltradosPorTipo = new ArrayList<>();
         if (filtro.isFiltroVideo()) {
-            videosFiltradosPorTipo.addAll(filtrarPorTipo(videosComDuracaoFiltrada, "video"));
+            videosFiltrados.retainAll(filtrarPorTipo(videosFiltrados, "video"));
         }
         if (filtro.isFiltroShorts()) {
-            videosFiltradosPorTipo.addAll(filtrarPorTipo(videosComDuracaoFiltrada, "shorts"));
-        }
-        if (videosFiltradosPorTipo.isEmpty()) {
-            videosFiltradosPorTipo.addAll(videosComDuracaoFiltrada); // Nenhum filtro de tipo selecionado, manter vídeos filtrados até o momento
+            videosFiltrados.retainAll(filtrarPorTipo(videosFiltrados, "shorts"));
         }
 
-        return videosFiltradosPorTipo;
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), videosFiltrados.size());
+
+        return new PageImpl<>(videosFiltrados.subList(start, end), pageable, videosFiltrados.size());
     }
 
     private List<Video> filtrarPorDuracao(List<Video> videos, int duracaoMinima, int duracaoMaxima) {
