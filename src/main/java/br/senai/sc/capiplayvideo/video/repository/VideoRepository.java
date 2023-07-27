@@ -4,6 +4,7 @@ import br.senai.sc.capiplayvideo.video.model.entity.Categoria;
 import br.senai.sc.capiplayvideo.video.model.entity.Video;
 import br.senai.sc.capiplayvideo.video.model.projection.VideoMiniaturaProjection;
 import br.senai.sc.capiplayvideo.video.model.projection.VideoProjection;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +23,5 @@ public interface VideoRepository extends JpaRepository<Video, String> {
     Page<VideoMiniaturaProjection> findAllByCategoria(Categoria categoria, Pageable pageable);
 
     Optional<VideoProjection> findByUuid(String uuid);
+
 }
