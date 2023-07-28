@@ -1,6 +1,6 @@
 package br.senai.sc.capiplayvideo.usuario.service;
 
-import br.senai.sc.capiplayvideo.usuario.model.Usuario;
+import br.senai.sc.capiplayvideo.usuario.model.entity.Usuario;
 
 public class UsuarioService {
     UsuarioService usuarioService;
